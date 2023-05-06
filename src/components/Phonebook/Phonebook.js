@@ -7,12 +7,7 @@ import css from './Phonebook.module.css';
 
 class Phonebook extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
 
@@ -54,6 +49,21 @@ class Phonebook extends Component {
     }));
   };
 
+  componentDidMount() {
+    const contact = localStorage.getItem('contact');
+    const parsedContact = JSON.parse(contact);
+
+    if (parsedContact) {
+      this.setState({ contacts: parsedContact });      
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contact', JSON.stringify(this.state.contacts));
+    }
+  }
+
   render() {
     const { filter } = this.state;
     return (
@@ -62,7 +72,7 @@ class Phonebook extends Component {
         <ContactForm onSubmit={this.addContacts} />
         <h2>Contacts</h2>
         <Filter value={filter} onChange={this.handleFilterChange} />
-        <ContactList          
+        <ContactList
           onDeleteContact={this.deleteContact}
           onFiltred={this.filtredName}
         />
